@@ -215,3 +215,50 @@ def post_list(request):
     return render(request, 'blog/post/list.html', {'posts': posts})
 ```
 
+```python
+def post_detail(request, year, month, day, post):
+    post = get_object_or_404(Post, slug=post, status="published", publish__year=year, publish__month=month, publish__day=day)
+    return render(request, 'blog/post/detail.html', {'post': post})
+```
+
+##### **为视图配置URL**
+
+在`blog`应用下目录下边新建一个`urls.py`文件，然后添加如下内容：
+
+```python
+from django.urls import path
+from . import views
+
+app_name = 'blog'
+urlpatterns = [
+    # post views
+    path('', views.post_list, name='post_list'),
+    path('<int:year>/<int:month>/<int:day>/<slug:post>/', views.post_detail, name='post_detail'),
+]
+```
+
+到`mysite`目录下编辑`urls.py`：
+
+```python
+from django.contrib import admin
+from django.urls import path, include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('blog/', include('blog.urls', namespace='blog')),
+]
+```
+
+**反向解析url**
+
+为Post模型的每一个数据对象创建规范化的URL，添加一个`get_absolute_url()`方法，该方法返回对象的URL。我们将使用`reverse()`方法通过名称和其他参数来构建URL。之后在模板中，就可以使用`get_absolute_url()`创建超链接到具体数据对象。编辑`models.py`文件
+
+```python
+from django.urls import reverse
+
+class Post(models.Model):
+    # ......
+    def get_absolute_url(self):
+        return reverse('blog:post_detail', args=[self.publish.year, self.publish.month, self.publish.day, self.slug])
+```
+
