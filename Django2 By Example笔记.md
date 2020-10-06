@@ -215,4 +215,3 @@ def post_list(request):
     return render(request, 'blog/post/list.html', {'posts': posts})
 ```
 
-![img](https://tva1.sinaimg.cn/large/007S8ZIlly1gjfqzct53bj30e80e8mxl.jpg)
