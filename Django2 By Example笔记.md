@@ -249,7 +249,7 @@ urlpatterns = [
 ]
 ```
 
-**反向解析url**
+##### **反向解析url**
 
 为Post模型的每一个数据对象创建规范化的URL，添加一个`get_absolute_url()`方法，该方法返回对象的URL。我们将使用`reverse()`方法通过名称和其他参数来构建URL。之后在模板中，就可以使用`get_absolute_url()`创建超链接到具体数据对象。编辑`models.py`文件
 
@@ -260,5 +260,137 @@ class Post(models.Model):
     # ......
     def get_absolute_url(self):
         return reverse('blog:post_detail', args=[self.publish.year, self.publish.month, self.publish.day, self.slug])
+```
+
+##### **模板**
+
+`post/list.html`：
+
+```django
+{% extends "blog/base.html" %}
+{% block title %}My Blog{% endblock %}
+{% block content %}
+    <h1>My Blog</h1>
+    {% for post in posts %}
+        <h2>
+            <a href="{{ post.get_absolute_url }}">
+                {{ post.title }}
+            </a>
+        </h2>
+        <p class="date">
+        Published {{ post.publish }} by {{ post.author }}
+        </p>
+        //{{ post.body|truncatewords:30|linebreaks }}
+				{{ post.body|slice:70|linebreaks }}
+    {% endfor %}
+{% endblock %}
+```
+
+`post/detail.html`：
+
+```django
+{% extends 'blog/base.html' %}
+{% block title %}
+{{ post.title }}
+{% endblock %}
+
+{% block content %}
+    <h1>{{ post.title }}</h1>
+    <p class="date">
+    Published {{ post.publish }} by {{ post.author }}
+    </p>
+    {{ post.body|linebreaks }}
+{% endblock %}
+```
+
+##### **分页**
+
+**单独分页：**
+
+编辑`blog`应用的`views.py`文件，修改`post_list`视图：
+
+```python
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
+def post_list(request):
+    object_list = Post.published.all()
+    paginator = Paginator(object_list, 3)  # 每页显示3篇文章
+    page = request.GET.get('page')
+    try:
+        posts = paginator.page(page)
+    except PageNotAnInteger:
+        # 如果page参数不是一个整数就返回第一页
+        posts = paginator.page(1)
+    except EmptyPage:
+        # 如果页数超出总页数就返回最后一页
+        posts = paginator.page(paginator.num_pages)
+    return render(request, 'blog/post/list.html', {'page': page, 'posts': posts})
+```
+
+**通用分页模板：**
+
+在`blog`应用的`templates/`目录中新建`pagination.html`
+
+```django
+<div class="pagination">
+    <span class="step-links">
+        {% if page.has_previous %}
+        <a href="?page={{ page.previous_page_number }}">Previous</a>
+        {% endif %}
+    <span class="current">
+        Page {{ page.number }} of {{ page.paginator.num_pages }}.
+    </span>
+    {% if page.has_next %}
+        <a href="?page={{ page.next_page_number }}">Next</a>
+    {% endif %}
+    </span>
+</div>
+```
+
+`blog/post/list.html`文件，在`{% content %}`中的最下边增加一行：
+
+```django
+{% block content %}
+    # ......
+    {% include 'pagination.html' with page=posts %}
+{% endblock %}
+```
+
+##### **基于类的视图**
+
+**CBV相比FBV有如下优点：**
+
+- 可编写单独的方法对应不同的HTTP请求类型如GET，POST，PUT等请求，不像FBV一样需要使用分支
+- 使用多继承创建可复用的类模块（也叫做*mixins*）
+
+**ListView（列出任意类型的数据）：**
+
+编辑`blog`应用的`views.py`文件，添加下列代码：
+
+```python
+from django.views.generic import ListView
+class PostListView(ListView):
+    queryset = Post.published.all()
+   # model = Post
+    context_object_name = 'posts'  # 如不设置context_object_name，默认变量名是object_list
+    paginate_by = 3
+    template_name = 'blog/post/list.html'  # 如果不指定，默认使用blog/post_list.html
+```
+
+打开`blog`应用的`urls.py`文件，注释掉刚才的`post_list` URL pattern，为PostListView类增加一行：
+
+```python
+urlpatterns = [
+    # post views
+    # path('', views.post_list, name='post_list'),
+    path('',views.PostListView.as_view(),name='post_list'),
+    path('<int:year>/<int:month>/<int:day>/<slug:post>/', views.post_detail, name='post_detail'),
+]
+```
+
+Django内置的`ListView`返回的变量名称叫做`page_obj`,所以必须修改`post/list.html`中导入分页模板的那行代码：
+
+```django
+{% include 'pagination.html' with page=page_obj %}
 ```
 
