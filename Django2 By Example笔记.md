@@ -123,7 +123,7 @@ python manage.py runserver
 #创建应用
 python manage.py startapp blog
 
-#pycharm打开项目，并选择已存在的虚拟环境
+pycharm打开项目，并选择已存在的虚拟环境
 
 #项目设置
 settings.py
@@ -138,6 +138,30 @@ settings.py
 python manage.py makemigrations blog
 python manage.py migrate
 ```
+
+##### **更换sqlite为mysql**
+
+```shell
+#安装mysql后，才能安装mysqlclient，并且不能删除mysql
+$ brew install mysql  
+$ pip install mysqlclient
+
+#settings.py
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'testblog',
+        'USER': 'root',
+        'PASSWORD': 'root',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
+    },
+}
+```
+
+
+
+
 
 ##### **管理后台**
 
