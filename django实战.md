@@ -2302,3 +2302,102 @@ def now():
 
 
 
+##### **Windows环境django项目导入**
+
+pip list
+
+pip 生成和安装requirements.txt
+
+生成文件
+pip freeze > requirements.txt
+
+从requirements.txt安装依赖库
+pip install -r requirements.txt
+
+
+redis-cli.exe -h 127.0.0.1 -p 6379
+
+
+
+
+Django连接mysql django.core.exceptions.ImproperlyConfigured: mysqlclient 1.3.13 or newer is required：
+https://blog.csdn.net/weixin_43297217/article/details/91128528
+
+
+明明安装了更高级版本的mysqlclient还是提示错误。
+django使用MySQL有两种方法：
+方法一：
+
+首先在项目settings.py的文件同目录下的 init.py 文件里输入
+
+import pymysql
+pymysql.install_as_MySQLdb()
+然后用下载的命令安装安装pymysql驱动：
+
+pip install pymysql
+方法二：
+
+如提示 Did you install mysqlclient? 说明缺失这个包(mysql的驱动包)，并且这个包不能通过pip安装，须自己下载，下载地址：
+
+https://www.lfd.uci.edu/~gohlke/pythonlibs/#mysqlclient
+
+下载对应版本软件包
+
+python 3.6 32的下载： mysqlclient?1.3.13?cp36?cp36m?win32.whl
+python 3.6 64 的下载：mysqlclient?1.3.13?cp36?cp36m?win_amd64.whl
+错误原因：
+发现出现错误的原因是在项目settings.py的文件同目录下的 init.py 文件里输入了：
+import pymysql
+pymysql.install_as_MySQLdb()。
+上述两种方法出现了冲突。
+解决办法：
+pycharm软件下：
+1.先去init.py把以下代码删除：import pymysql
+pymysql.install_as_MySQLdb()。
+2.去设置里面找到项目库，卸载pymysql.
+3.项目库里面安装最新版的mysqlclient即可。
+
+
+
+Django启动服务器时，报错mysql的2059错误的解决办法。
+http://blog.sina.com.cn/s/blog_a60b1c3c0102y9cs.html
+环境说明：
+Windows 10
+python 3.6.5
+Django 2.0.5
+mysql 8.0.11
+
+当启动django自带的服务器时，报错2059：
+
+> _mysql_exceptions.OperationalError: (2059, )
+
+> django.db.utils.OperationalError: (2059, )
+
+启动方式为如下：
+
+> python manage.py runserver 0.0.0.0:8000
+
+经过一番查询，调试，最终发现了问题所在。主要就是mysql8.0的问题。
+目前最新的mysql8.0对用户密码的加密方式为caching_sha2_password, django暂时还不支持这种新增的加密方式。只需要将用户加密方式改为老的加密方式即可。
+
+解决步骤：
+1.登录mysql，连接用户为root。
+
+> mysql -u root -p
+
+2.执行命令查看加密方式
+
+> use mysql;
+> select user,plugin from user where user='root';
+
+3.执行命令修改加密方式
+
+> alter user 'root'@'localhost' identified with mysql_native_password by 'yourpassword'
+
+4.属性权限使配置生效
+
+> flush privileges
+
+
+
+重设mysql8.0的加密方式后，再次启动django服务器就没有任何问题了。
