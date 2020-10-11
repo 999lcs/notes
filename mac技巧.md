@@ -2,7 +2,7 @@
 
 
 
-###### **切换到root用户**
+##### **切换到root用户**
 
 使用命令：sudo su -；命令执行后输入密码
 
@@ -12,7 +12,7 @@
 
 
 
-###### **zsh及oh-my-zsh安装配置**
+##### **zsh及oh-my-zsh安装配置**
 
 查看当前使用的 shell
 
@@ -149,7 +149,7 @@ source ~/.zshrc
 
 
 
-#### **解决github图片不显示的问题**
+##### **解决github图片不显示的问题**
 
 修改C:\Windows\System32\drivers\etc\hosts，在文件末尾添加：
 
@@ -174,4 +174,28 @@ source ~/.zshrc
 
  # GitHub End
 ```
+
+##### **mac忘记mysql密码**
+
+```shell
+#01-在系统偏好设置中停止mysql服务 或者使用指令
+sudo /usr/local/mysql/support-files/mysql.server stop
+
+#02-输入指令：
+cd /usr/local/mysql/bin 
+
+#03-使用管理员权限登录
+sudo su
+
+#输入以下命令来禁止mysql验证功能 　
+./mysqld_safe --skip-grant-tables &
+
+#04-输入 ./mysql/ 回车，输入
+FLUSH PRIVILEGES;
+
+#05-修改密码
+ALTER USER 'root'@'localhost' IDENTIFIED BY '你的新密码';
+```
+
+ 
 
