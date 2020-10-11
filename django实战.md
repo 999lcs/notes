@@ -23,7 +23,7 @@ if request.method == "GET":
 
 ###### contexts（上下文）
 
-![](https://tva1.sinaimg.cn/large/007S8ZIlly1gjfqqa59fej30h50bf76h.jpg)
+![](https://tva1.sinaimg.cn/large/007S8ZIlly1gjlq3gwvuxj30h50bf0ux.jpg)
 
 ###### 带有输入框和确认按钮的表单
 
@@ -53,11 +53,11 @@ Last name: <input type="text" name="LastName" value="Mouse"><br>
 
 method：`if request.method == "POST":`；返回类字典对象：`column_name = request.POST['column']`
 
-![image-20200805080524143](https://tva1.sinaimg.cn/large/007S8ZIlly1gjfqqq2kufj30hf0e8jui.jpg)
+![image-20200805080524143](https://tva1.sinaimg.cn/large/007S8ZIlly1gjlq3w38atj30hf0e840n.jpg)
 
 ###### 登录后调用session
 
-![image-20200804233025592](https://tva1.sinaimg.cn/large/007S8ZIlly1gjfqqv75i9j30h104j41t.jpg)
+![image-20200804233025592](https://tva1.sinaimg.cn/large/007S8ZIlly1gjlq490rajj30h104jt9e.jpg)
 
 
 
@@ -160,7 +160,7 @@ content: '<div class="text-center" style="margin-top:20px"><p>请输入新的栏
 
 JavaScript弹窗可以直接引用父页面的模板变量并获取后台数据，同时JavaScript新打开的页面实际已经渲染好了，只是等着用户点击加载而已；本质上JavaScript弹窗是继承父页面之前同步交互，除非另外再使用AJAX进行异步交互。如下，弹窗中引用父页面模板变量{{ columns }}的效果：
 
-![image-20200805153055605](https://tva1.sinaimg.cn/large/007S8ZIlly1gjfqswpjt6j30bh093dg8.jpg)
+![image-20200805153055605](https://tva1.sinaimg.cn/large/007S8ZIlly1gjlq4nxj0yj30bh093mxi.jpg)
 
 
 
@@ -168,7 +168,7 @@ JavaScript弹窗可以直接引用父页面的模板变量并获取后台数据�
 
 ##### 表单类
 
-![截屏2020-08-14 上午12.17.55](https://tva1.sinaimg.cn/large/007S8ZIlly1gjlpxa5uyfj30ei0khacy.jpg)
+![截屏2020-08-14 上午12.17.55](https://tva1.sinaimg.cn/large/007S8ZIlly1gjlq5757ldj30ei0kh41e.jpg)
 
 
 
