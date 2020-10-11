@@ -168,7 +168,7 @@ JavaScript弹窗可以直接引用父页面的模板变量并获取后台数据�
 
 ##### 表单类
 
-![截屏2020-08-14 上午12.17.55](https://tva1.sinaimg.cn/large/007S8ZIlly1gjfqt1afpvj30ei0khdkq.jpg)
+![截屏2020-08-14 上午12.17.55](https://tva1.sinaimg.cn/large/007S8ZIlly1gjlpxa5uyfj30ei0khacy.jpg)
 
 
 
