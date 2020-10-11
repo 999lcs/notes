@@ -418,3 +418,7 @@ Django内置的`ListView`返回的变量名称叫做`page_obj`,所以必须修�
 {% include 'pagination.html' with page=page_obj %}
 ```
 
+##### **django应用架构图**
+
+![20201007175701](https://raw.githubusercontent.com/999lcs/img/main/20201007175701.png?token=AK4FYC5MWACTVQHYMS5RSNS7QK6PW)
+
