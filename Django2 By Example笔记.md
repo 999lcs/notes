@@ -423,3 +423,8 @@ Django内置的`ListView`返回的变量名称叫做`page_obj`,所以必须修�
 
 
 ![20201007175701](https://tva1.sinaimg.cn/large/007S8ZIlly1gjlq6zse42j30lj0g6dgd.jpg)
+
+
+
+#### 第二章 增强博客功能
+
