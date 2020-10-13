@@ -91,7 +91,7 @@ workon 环境名：选择环境
 rmvirtualenv 环境名：删除环境
 
 mkproject mic：创建mic项目和运行环境mic
-
+	
 mktmpenv：创建临时运行环境
 
 lsvirtualenv：列出可用的运行环境
