@@ -1,4 +1,4 @@
-#### mac技巧
+### 笔记和摘录
 
 
 
@@ -197,5 +197,49 @@ FLUSH PRIVILEGES;
 ALTER USER 'root'@'localhost' IDENTIFIED BY '你的新密码';
 ```
 
- 
+#####  
+
+##### **Django设置中国时区问题**
+
+系统调用为格林威治时间，中国在东八区，需要加八小时得到中国时间。
+
+这时需要在settings.py中进行设置
+
+TIME_ZONE = 'Asia/Shanghai'
+但经过测试这时不足以修改前端或数据库存储的时间。查阅文档后发现，还需要修改
+
+USE_TZ = False
+此时调用时间即为中国的时间
+
+源码证明
+
+```python
+def now():
+    """
+    Return an aware or naive datetime.datetime, depending on settings.USE_TZ.
+    """
+    if settings.USE_TZ:
+        # timeit shows that datetime.now(tz=utc) is 24% slower
+        return datetime.utcnow().replace(tzinfo=utc)
+    else:
+        return datetime.now()
+```
+
+原文链接：https://blog.csdn.net/rudy5348/java/article/details/89847213
+
+```python
+#如果settings.py使用：
+TIME_ZONE = 'Asia/Shanghai'
+USE_TZ = True
+
+#将会数据库是UTC时间，前端是北京时间(UTC+8),造成问题是，如果以日期为参数查询，同时又正好碰到前后端日期不一致，将会出错，如：
+    def get_absolute_url(self):
+        return reverse('blog:post_detail', args=[self.publish.year, self.publish.month, self.publish.day, self.slug])
+    
+#所以如果不跨时区使用，设置如下即可：
+TIME_ZONE = 'Asia/Shanghai'
+USE_TZ = False
+```
+
+
 

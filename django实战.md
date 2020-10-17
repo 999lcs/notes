@@ -2109,8 +2109,6 @@ rm -Rf ~/Library/LaunchAgents/homebrew.mxcl.mysql.plist
 
 
 
-
-
 ##### Django删除超级用户
 
 ```python
@@ -2297,12 +2295,27 @@ def now():
         return datetime.now()
 ```
 
-
 原文链接：https://blog.csdn.net/rudy5348/java/article/details/89847213
 
 
 
-##### **Windows环境django项目导入**
+##### **时区问题**
+
+```python
+#如果settings.py使用：
+TIME_ZONE = 'Asia/Shanghai'
+USE_TZ = True
+
+#将会数据库是UTC时间，前端是北京时间(UTC+8),造成问题是，如果以日期为参数查询，同时又正好碰到前后端日期不一致，将会出错，如：
+    def get_absolute_url(self):
+        return reverse('blog:post_detail', args=[self.publish.year, self.publish.month, self.publish.day, self.slug])
+    
+#所以如果不跨时区使用，设置如下即可：
+TIME_ZONE = 'Asia/Shanghai'
+USE_TZ = False
+```
+
+#### Windows环境django项目导入
 
 pip list
 
@@ -2359,6 +2372,8 @@ pymysql.install_as_MySQLdb()。
 
 
 
+#### mysql8.0密码加密方式问题
+
 Django启动服务器时，报错mysql的2059错误的解决办法。
 http://blog.sina.com.cn/s/blog_a60b1c3c0102y9cs.html
 环境说明：
@@ -2397,7 +2412,5 @@ mysql 8.0.11
 4.属性权限使配置生效
 
 > flush privileges
-
-
 
 重设mysql8.0的加密方式后，再次启动django服务器就没有任何问题了。
