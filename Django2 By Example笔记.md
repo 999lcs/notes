@@ -1,5 +1,7 @@
 ### Django2 By Example笔记
 
+[TOC]
+
 #### 第一章 创建博客应用
 
 ##### **时区及语言**
@@ -159,10 +161,6 @@ DATABASES = {
 }
 ```
 
-
-
-
-
 ##### **管理后台**
 
 ```python
@@ -190,9 +188,9 @@ Post.objects.create(title='One more post', slug='One more post', body='Post body
 post.title = 'New title'
 #all
 all_posts = Post.objects.all()
-#filter&publish__year
+#filter&publish__year,条件查询采用双下划线写法
 Post.objects.filter(publish__year=2017)
-#filter&author__username
+#filter&author__username,双下划线还一个用法是从关联的模型中取其字段
 Post.objects.filter(author__username='admin')
 #链式调用
 Post.objects.filter(publish__year=2017).filter(author__username='admin')
@@ -428,3 +426,4 @@ Django内置的`ListView`返回的变量名称叫做`page_obj`,所以必须修�
 
 #### 第二章 增强博客功能
 
+##### **django应用架构图**
