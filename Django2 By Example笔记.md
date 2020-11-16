@@ -271,7 +271,7 @@ urlpatterns = [
 ]
 ```
 
-##### **反向解析url**
+##### **反向解析URL**
 
 为Post模型的每一个数据对象创建规范化的URL，添加一个`get_absolute_url()`方法，该方法返回对象的URL。我们将使用`reverse()`方法通过名称和其他参数来构建URL。之后在模板中，就可以使用`get_absolute_url()`创建超链接到具体数据对象。编辑`models.py`文件
 
@@ -426,4 +426,85 @@ Django内置的`ListView`返回的变量名称叫做`page_obj`,所以必须修�
 
 #### 第二章 增强博客功能
 
-##### **django应用架构图**
+##### **通过邮件分享文章**
+
+**创建表单：**
+
+- `Form`：用于生成标准的表单
+- `ModelForm`：用于从模型生成表单
+
+在`forms.py`文件，然后编写：
+
+```python
+from django import forms
+
+class EmailPostForm(forms.Form):
+    name = forms.CharField(max_length=25)
+    email = forms.EmailField()
+    to = forms.EmailField()
+    comments = forms.CharField(required=False, widget=forms.Textarea)
+```
+
+**通过视图处理表单：**
+
+编辑`blog`应用的`views.py`文件：
+
+```python
+from .forms import EmailPostForm
+
+def post_share(request, post_id):
+    # 通过id 获取 post 对象
+    post = get_object_or_404(Post, id=post_id, status='published')
+    if request.method == "POST":
+        # 表单被提交
+        form = EmailPostForm(request.POST)
+        if form.is_valid():
+            # 验证表单数据
+            cd = form.cleaned_data
+            # 发送邮件......
+    else:
+        form = EmailPostForm()
+    return render(request, 'blog/post/share.html', {'post': post, 'form': form})
+```
+
+**SMTP服务器设置：**
+
+在`settings.py`文件中加入SMTP服务器设置：
+
+```python
+EMAIL_HOST = 'smtp.sina.com'
+EMAIL_HOST_USER = "999lcs@sina.com"
+EMAIL_HOST_PASSWORD = "b42de0d8f5f06d8a"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = "999lcs@sina.com"
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' # 将邮件打印在控制台
+```
+
+输入`python manage.py shell`，在命令行环境中试验一下发送邮件的指令：
+
+```python
+from django.core.mail import send_mail
+send_mail('Django mail', 'This e-mail was sent with Django.', 'your_account@gmail.com', ['your_account@gmail.com'], fail_silently=False)
+# 参数分别是邮件标题、邮件内容、发件人和收件人地址列表，最后一个参数`fail_silently=False`表示如果发送失败就抛出异常。如果看到返回1，就说明邮件成功发送。
+```
+
+**视图中增加发邮件功能：**
+
+把发送邮件的功能加入到视图中，编辑`views.py`中的`post_share`视图函数：
+
+```python
+def post_share(request, post_id):
+    sent = False
+            # ......
+            # 发送邮件
+            post_url = request.build_absolute_uri(post.get_absolute_url())
+            subject = '{} ({}) recommends you reading "{}"'.format(cd['name'], cd['email'], post.title)
+            message = 'Read "{}" at {}\n\n{}\'s comments:{}'.format(post.title, post_url, cd['name'], cd['comments'])
+            send_mail(subject, message, 'lee0709@vip.sina.com', [cd['to']])
+            sent = True
+    else:
+        form = EmailPostForm()
+    return render(request, 'blog/post/share.html', {'post': post, 'form': form, 'sent': sent})
+```
+
