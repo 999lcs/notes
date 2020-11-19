@@ -245,6 +245,8 @@ def post_detail(request, year, month, day, post):
 
 ##### **为视图配置URL**
 
+<u>URL pattern的作用是将URL映射到视图上。Django接到对于某个URL的请求时，按照顺序从上到下试图匹配URL，停在第一个匹配成功的URL处，将`HttpRequest`类的一个实例和其他参数传给对应的视图并调用视图处理本次请求。</u>
+
 在`blog`应用下目录下边新建一个`urls.py`文件，然后添加如下内容：
 
 ```python
