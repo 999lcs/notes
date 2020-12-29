@@ -261,7 +261,7 @@ urlpatterns = [
 ]
 ```
 
-到`mysite`目录下编辑`urls.py`：
+到`mysite`目录下编辑`urls.py`，之后我们方便的通过使用命名空间来快速指向具体的URL，例如`blog:post_list`和`blog:post_detail`：
 
 ```python
 from django.contrib import admin
@@ -509,4 +509,57 @@ def post_share(request, post_id):
         form = EmailPostForm()
     return render(request, 'blog/post/share.html', {'post': post, 'form': form, 'sent': sent})
 ```
+
+还需要给视图配置URL，打开`blog`应用中的`urls.py`，加一条`post_share`的URL pattern：
+
+```python
+urlpatterns = [
+    # ...
+    path('<int:post_id>/share/', views.post_share, name='post_share'),
+]
+```
+
+**在模板中渲染表单：**
+
+在`blog/templates/blog/post/`目录内创建share.html，添加如下代码：
+
+```python
+{% extends "blog/base.html" %}
+
+{% block title %}Share a post{% endblock %}
+
+{% block content %}
+    {% if sent %}
+        <h1>E-mail successfully sent</h1>
+        <p>
+            "{{ post.title }}" was successfully sent to {{ form.cleaned_data.to }}.
+        </p>
+    {% else %}
+        <h1>Share "{{ post.title }}" by e-mail</h1>
+        <form action="." method="post">
+        {{ form.as_p }}
+            {% csrf_token %}
+            <input type="submit" value="Send e-mail">
+        </form>
+    {% endif %}
+{% endblock %}
+```
+
+修改`blog/post/detail.html`将下列链接增加到`{{ post.body|linebreaks }}`之后：
+
+```python
+<p>
+    <a href="{% url "blog:post_share" post.id %}">Share this post</a>
+</p>
+```
+
+这里的`{% url %}`标签，其功能和在视图中使用的`reverse()`方法类似，使用URL的命名空间`blog`和URL命名`post_share`，再传入一个ID作为参数，就可以构建出一个URL。在页面渲染时，`{% url %}`就会被渲染成反向解析出的URL。
+
+关闭浏览器验证的方法是给表单添加`novalidate`属性：`<form action="" **novalidate**>`
+
+
+
+
+
+
 
